@@ -1,0 +1,16 @@
+<UserControl x:Class="DofusSwitcher.UI.ClassBadge"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="Self">
+    <Border Background="{Binding Appearance.Background, ElementName=Self}"
+            CornerRadius="{Binding CornerRadius, ElementName=Self}">
+        <Grid Margin="{Binding ImageMargin, ElementName=Self}">
+            <Image Source="{Binding Appearance.Image, ElementName=Self}" Stretch="Uniform"
+                   RenderOptions.BitmapScalingMode="HighQuality" />
+            <Viewbox Margin="3"
+                     Visibility="{Binding Appearance.ShowLabel, ElementName=Self, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock Text="{Binding Appearance.Label, ElementName=Self}" FontWeight="Bold" Foreground="White" />
+            </Viewbox>
+        </Grid>
+    </Border>
+</UserControl>

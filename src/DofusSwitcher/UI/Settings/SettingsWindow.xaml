@@ -1,0 +1,459 @@
+<Window x:Class="DofusSwitcher.UI.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:DofusSwitcher.UI"
+        Title="Réglages — Dofus Switcher"
+        Icon="/Assets/app.ico"
+        Width="1210" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        Topmost="True"
+        FontFamily="{StaticResource UiFont}" FontSize="13"
+        Foreground="{StaticResource TextBrush}"
+        UseLayoutRounding="True">
+    <Window.Resources>
+        <!-- Emplacement vide "Ajouter un perso", en pointillés : la place libre dans l'équipe -->
+        <Style x:Key="AddSlotButton" TargetType="Button" BasedOn="{StaticResource ButtonBase}">
+            <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Height="52" Background="Transparent">
+                            <Rectangle x:Name="Dash" RadiusX="9" RadiusY="9" Stroke="#40FFE9C8"
+                                       StrokeThickness="1.5" StrokeDashArray="4 3" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="12"
+                                           VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <ContentPresenter VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Dash" Property="Stroke" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Panneau d'une colonne -->
+        <Style x:Key="Panel" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource StrokeBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="16,14" />
+        </Style>
+
+        <!-- Ligne de réglage : libellé à gauche, contrôle à droite -->
+        <Style x:Key="SettingRow" TargetType="DockPanel">
+            <Setter Property="Margin" Value="0,5" />
+            <Setter Property="LastChildFill" Value="True" />
+        </Style>
+
+        <!-- Case de mosaïque : la fenêtre d'un perso, à la couleur de sa classe, avec son symbole, son nom et sa classe -->
+        <DataTemplate x:Key="MosaicTile">
+            <Border x:Name="Tile" CornerRadius="4" Margin="2" Background="{Binding Appearance.Background}"
+                    BorderBrush="#33000000" BorderThickness="1" ClipToBounds="True">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Image Source="{Binding Appearance.Image}" Stretch="Uniform" MaxHeight="46" Margin="4,6,4,2"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Text="{Binding Appearance.Label}" FontWeight="Bold" FontSize="16" Foreground="White"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Visibility="{Binding Appearance.ShowLabel, Converter={StaticResource BoolToVisibility}}" />
+                    <Border Grid.Row="1" Background="#A6000000" Padding="6,2,6,3">
+                        <StackPanel>
+                            <TextBlock Text="{Binding Name}" FontSize="11" FontWeight="SemiBold" Foreground="White"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding Subtitle}" FontSize="10" Foreground="#D9FFFFFF"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- Petite case (colonne de la mosaïque "perso actif en grand") : symbole et nom -->
+        <DataTemplate x:Key="MosaicTileSmall">
+            <Border CornerRadius="3" Margin="2" Background="{Binding Appearance.Background}"
+                    BorderBrush="#33000000" BorderThickness="1" ClipToBounds="True"
+                    ToolTip="{Binding Subtitle}">
+                <DockPanel>
+                    <Border DockPanel.Dock="Bottom" Background="#A6000000" Padding="3,1,3,2">
+                        <TextBlock Text="{Binding Name}" FontSize="9" FontWeight="SemiBold" Foreground="White"
+                                   TextTrimming="CharacterEllipsis" HorizontalAlignment="Center" />
+                    </Border>
+                    <Grid>
+                        <Image Source="{Binding Appearance.Image}" Stretch="Uniform" Margin="3"
+                               RenderOptions.BitmapScalingMode="HighQuality" />
+                        <TextBlock Text="{Binding Appearance.Label}" FontWeight="Bold" FontSize="11" Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Visibility="{Binding Appearance.ShowLabel, Converter={StaticResource BoolToVisibility}}" />
+                    </Grid>
+                </DockPanel>
+            </Border>
+        </DataTemplate>
+
+        <!-- Case d'aperçu : grande (symbole, pseudo, classe) ou compacte ; cerclée d'or pour le perso actif -->
+        <DataTemplate x:Key="PreviewTileTemplate" DataType="{x:Type ui:PreviewTile}">
+            <Grid>
+                <ContentPresenter x:Name="Tile" Content="{Binding Character}" ContentTemplate="{StaticResource MosaicTile}" />
+                <Border x:Name="Outline" BorderBrush="{StaticResource AccentBrush}" BorderThickness="2"
+                        CornerRadius="5" Visibility="Collapsed" />
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Compact}" Value="True">
+                    <Setter TargetName="Tile" Property="ContentTemplate" Value="{StaticResource MosaicTileSmall}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                    <Setter TargetName="Outline" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Vignette de mosaïque : chaque case posée à sa place, à l'échelle d'un écran 16:9 -->
+        <Style x:Key="MosaicPreview" TargetType="ItemsControl">
+            <Setter Property="Width" Value="{x:Static ui:SettingsWindow.PreviewWidth}" />
+            <Setter Property="Height" Value="{x:Static ui:SettingsWindow.PreviewHeight}" />
+            <Setter Property="ItemTemplate" Value="{StaticResource PreviewTileTemplate}" />
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding Left}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Top}" />
+                        <Setter Property="Width" Value="{Binding Width}" />
+                        <Setter Property="Height" Value="{Binding Height}" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Petite case numérique pour l'initiative (bord rouge si ce n'est pas un nombre) -->
+        <Style x:Key="InitiativeBox" TargetType="TextBox">
+            <Setter Property="Width" Value="66" />
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+            <Setter Property="CaretBrush" Value="{StaticResource TextBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="ToolTip" Value="Initiative du perso (fiche de caractéristiques en jeu). Sert à ranger l'équipe dans l'ordre des tours." />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd" Background="{StaticResource InsetBrush}" BorderBrush="{StaticResource StrokeBrush}"
+                                BorderThickness="1" CornerRadius="6" Padding="4,5">
+                            <Grid>
+                                <ScrollViewer x:Name="PART_ContentHost" Focusable="False"
+                                              HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" />
+                                <TextBlock x:Name="Placeholder" Text="Init." Visibility="Collapsed" IsHitTestVisible="False"
+                                           HorizontalAlignment="Center" FontWeight="Normal" FontStyle="Italic"
+                                           Foreground="{StaticResource MutedTextBrush}" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="Placeholder" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="Placeholder" Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding HasInitiativeError}" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource DangerBrush}" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Divider" TargetType="Border">
+            <Setter Property="Height" Value="1" />
+            <Setter Property="Background" Value="{StaticResource StrokeBrush}" />
+            <Setter Property="Margin" Value="0,14" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="18">
+        <!-- Ombre sur un calque séparé pour garder un texte net -->
+        <Border CornerRadius="14" Background="{StaticResource WindowBrush}">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="24" ShadowDepth="4" Opacity="0.6" Color="Black" />
+            </Border.Effect>
+        </Border>
+
+        <Border CornerRadius="14" Background="{StaticResource WindowBrush}"
+                BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1">
+            <StackPanel>
+                <!-- Barre de titre (on la saisit pour déplacer la fenêtre) -->
+                <Grid Background="Transparent" Margin="24,16,14,0" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/logo.png" Width="34" Height="34" Margin="0,0,12,0"
+                               RenderOptions.BitmapScalingMode="HighQuality" />
+                        <TextBlock Text="Réglages" FontFamily="{StaticResource DisplayFont}" FontSize="22"
+                                   FontWeight="SemiBold" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Button Style="{StaticResource IconButton}" Content="&#xE8BB;" ToolTip="Fermer sans enregistrer (Échap)"
+                            HorizontalAlignment="Right" VerticalAlignment="Center" Click="Cancel_Click" />
+                </Grid>
+                <Border Height="2" Background="{StaticResource CopperBrush}" Margin="0,14,0,0" Opacity="0.75" />
+
+                <ScrollViewer x:Name="ContentScroll" Style="{StaticResource SlimScrollViewer}">
+                    <StackPanel Margin="24,20,24,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="430" />
+                            <ColumnDefinition Width="22" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="22" />
+                            <ColumnDefinition Width="300" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- ========== Colonne de gauche : l'équipe ========== -->
+                        <StackPanel Grid.Column="0">
+                            <DockPanel Margin="2,0,2,10">
+                                <TextBlock x:Name="CountText" DockPanel.Dock="Right" Foreground="{StaticResource MutedTextBrush}"
+                                           VerticalAlignment="Bottom" />
+                                <Button DockPanel.Dock="Right" Style="{StaticResource LinkButton}" Margin="0,0,16,0"
+                                        VerticalAlignment="Bottom" Click="SortByInitiative_Click"
+                                        ToolTip="Range l'équipe dans l'ordre des tours : la plus haute initiative d'abord">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE8CB;" FontFamily="{StaticResource IconFont}" FontSize="12"
+                                                   VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="Ranger par initiative" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <TextBlock Text="Ton équipe" Style="{StaticResource SectionTitle}" />
+                            </DockPanel>
+
+                            <Border Style="{StaticResource Panel}" Padding="6">
+                                <StackPanel>
+                                    <ItemsControl ItemsSource="{Binding Characters}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border x:Name="Card" Background="Transparent" CornerRadius="8" Padding="8">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <ui:ClassBadge Width="42" Height="42" Appearance="{Binding Appearance}"
+                                                                       CornerRadius="8" ImageMargin="4" />
+
+                                                        <StackPanel Grid.Column="1" Margin="12,0,8,0" VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Name}" FontFamily="{StaticResource DisplayFont}"
+                                                                       FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                                            <TextBlock Text="{Binding Subtitle}" FontSize="12"
+                                                                       Foreground="{StaticResource MutedTextBrush}" />
+                                                        </StackPanel>
+
+                                                        <!-- Actions au survol -->
+                                                        <StackPanel x:Name="Actions" Grid.Column="2" Orientation="Horizontal"
+                                                                    Margin="0,0,6,0" Visibility="Collapsed">
+                                                            <Button Style="{StaticResource IconButton}" Content="&#xE70E;" ToolTip="Monter"
+                                                                    Click="MoveUp_Click" Tag="{Binding}" />
+                                                            <Button Style="{StaticResource IconButton}" Content="&#xE70D;" ToolTip="Descendre"
+                                                                    Click="MoveDown_Click" Tag="{Binding}" />
+                                                            <Button Style="{StaticResource IconButton}" Content="&#xE894;"
+                                                                    ToolTip="Retirer le raccourci (le perso reste accessible par la barre et Suivant / Précédent)"
+                                                                    Click="ClearHotkey_Click" Tag="{Binding}" />
+                                                            <Button Style="{StaticResource IconButton}" Content="&#xE74D;" ToolTip="Retirer de l'équipe"
+                                                                    Click="Remove_Click" Tag="{Binding}" />
+                                                        </StackPanel>
+
+                                                        <TextBox Grid.Column="3" Style="{StaticResource InitiativeBox}" VerticalAlignment="Center"
+                                                                 Margin="0,0,8,0" LostFocus="Initiative_LostFocus"
+                                                                 Text="{Binding InitiativeText, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                        <TextBox Grid.Column="4" Style="{StaticResource KeycapBox}" VerticalAlignment="Center" Width="100"
+                                                                 ToolTip="Clique puis appuie sur une touche (Suppr = aucune)"
+                                                                 PreviewKeyDown="HotkeyBox_PreviewKeyDown"
+                                                                 Text="{Binding Hotkey, Mode=TwoWay, UpdateSourceTrigger=Explicit, TargetNullValue=''}" />
+                                                    </Grid>
+                                                </Border>
+                                                <DataTemplate.Triggers>
+                                                    <Trigger SourceName="Card" Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Actions" Property="Visibility" Value="Visible" />
+                                                        <Setter TargetName="Card" Property="Background" Value="{StaticResource CardHoverBrush}" />
+                                                    </Trigger>
+                                                </DataTemplate.Triggers>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <Button x:Name="AddSlot" Style="{StaticResource AddSlotButton}" Content="Ajouter un perso"
+                                            Margin="2,4,2,2" Click="AddSlot_Click" />
+
+                                    <!-- Choix du perso à ajouter -->
+                                    <Border x:Name="AddPanel" Visibility="Collapsed" Background="{StaticResource InsetBrush}"
+                                            CornerRadius="8" Padding="12,10" Margin="2,4,2,2">
+                                        <StackPanel>
+                                            <DockPanel>
+                                                <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Content="&#xE72C;"
+                                                        ToolTip="Chercher à nouveau" Click="Refresh_Click" />
+                                                <TextBlock Text="Persos connectés en jeu" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                            </DockPanel>
+
+                                            <TextBlock x:Name="NoDetectedHint" Style="{StaticResource HintText}" Margin="0,6,0,0"
+                                                       Text="Aucun nouveau perso connecté. Connecte-le en jeu, puis cherche à nouveau." />
+
+                                            <ItemsControl ItemsSource="{Binding Detected}" Margin="0,8,0,0">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Style="{StaticResource GhostButton}" Padding="6,5,12,5" Margin="0,0,6,6"
+                                                                Click="AddDetected_Click" Tag="{Binding}">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <ui:ClassBadge Width="24" Height="24" Appearance="{Binding Appearance}"
+                                                                               CornerRadius="5" ImageMargin="2" />
+                                                                <TextBlock Text="{Binding Name}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                                                            </StackPanel>
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+
+                                            <DockPanel Margin="0,4,0,0">
+                                                <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="Ajouter"
+                                                        Margin="8,0,0,0" Click="AddManual_Click" />
+                                                <TextBox x:Name="ManualName" Style="{StaticResource InputBox}" Tag="Ou tape un pseudo…"
+                                                         KeyDown="ManualName_KeyDown" />
+                                            </DockPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <TextBlock Style="{StaticResource HintText}" Margin="4,10,4,0"
+                                       Text="L'ordre de l'équipe sert pour Suivant / Précédent et pour la mosaïque. Tu peux aussi glisser les icônes dans la barre." />
+                        </StackPanel>
+
+                        <!-- ========== Colonne du milieu : raccourcis et barre ========== -->
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Raccourcis" Style="{StaticResource SectionTitle}" Margin="2,0,2,10" />
+                            <Border Style="{StaticResource Panel}" Padding="16,8">
+                                <ItemsControl ItemsSource="{Binding NavigationFields}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel Style="{StaticResource SettingRow}">
+                                                <TextBox DockPanel.Dock="Right" Style="{StaticResource KeycapBox}"
+                                                         ToolTip="Clique puis appuie sur une touche (Suppr = aucune)"
+                                                         PreviewKeyDown="HotkeyBox_PreviewKeyDown"
+                                                         Text="{Binding Hotkey, Mode=TwoWay, UpdateSourceTrigger=Explicit, TargetNullValue=''}" />
+                                                <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+
+                            <TextBlock Text="Barre flottante" Style="{StaticResource SectionTitle}" Margin="2,22,2,10" />
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <CheckBox x:Name="AutoHideSwitch" Style="{StaticResource Switch}">
+                                        <StackPanel>
+                                            <TextBlock Text="Seulement en jeu" />
+                                            <TextBlock Text="La barre se cache quand aucun client Dofus n'est au premier plan."
+                                                       Style="{StaticResource HintText}" />
+                                        </StackPanel>
+                                    </CheckBox>
+
+                                    <Border Style="{StaticResource Divider}" />
+
+                                    <DockPanel Style="{StaticResource SettingRow}">
+                                        <Border DockPanel.Dock="Right" Style="{StaticResource SegmentGroup}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <RadioButton x:Name="HorizontalOption" Checked="BarOption_Checked" GroupName="Orientation" Style="{StaticResource Segment}" Content="Horizontale" />
+                                                <RadioButton x:Name="VerticalOption" Checked="BarOption_Checked" GroupName="Orientation" Style="{StaticResource Segment}" Content="Verticale" />
+                                            </StackPanel>
+                                        </Border>
+                                        <TextBlock Text="Sens" VerticalAlignment="Center" />
+                                    </DockPanel>
+
+                                    <DockPanel Style="{StaticResource SettingRow}">
+                                        <Border DockPanel.Dock="Right" Style="{StaticResource SegmentGroup}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <RadioButton x:Name="SmallOption" Checked="BarOption_Checked" GroupName="Size" Style="{StaticResource Segment}" Content="Petites" />
+                                                <RadioButton x:Name="NormalOption" Checked="BarOption_Checked" GroupName="Size" Style="{StaticResource Segment}" Content="Normales" />
+                                                <RadioButton x:Name="LargeOption" Checked="BarOption_Checked" GroupName="Size" Style="{StaticResource Segment}" Content="Grandes" />
+                                            </StackPanel>
+                                        </Border>
+                                        <TextBlock Text="Icônes" VerticalAlignment="Center" />
+                                    </DockPanel>
+                                </StackPanel>
+                            </Border>
+
+                        </StackPanel>
+
+                        <!-- ========== Colonne de droite : la mosaïque, dessinée avec la vraie équipe ========== -->
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="Mosaïque" Style="{StaticResource SectionTitle}" Margin="2,0,2,10" />
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HintText}" Margin="0,0,0,12"
+                                               Text="Où va chaque fenêtre quand tu cliques sur le bouton mosaïque de la barre. Cerclé d'or : le perso au premier plan." />
+
+                                    <!-- Grille, dans l'ordre de l'équipe -->
+                                    <RadioButton x:Name="MosaicGridOption" GroupName="Mosaic" Style="{StaticResource LayoutChoice}"
+                                                 Tag="Grille">
+                                        <ItemsControl ItemsSource="{Binding GridPreview}" Style="{StaticResource MosaicPreview}" />
+                                    </RadioButton>
+
+                                    <!-- Perso actif en grand : le 1er de l'équipe en exemple, les autres autour -->
+                                    <RadioButton x:Name="MosaicFocusOption" GroupName="Mosaic" Style="{StaticResource LayoutChoice}"
+                                                 Tag="Perso actif en grand" Margin="0,14,0,0">
+                                        <ItemsControl ItemsSource="{Binding FocusPreview}" Style="{StaticResource MosaicPreview}" />
+                                    </RadioButton>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                    </Grid>
+                    <TextBlock x:Name="StatusText" Foreground="{StaticResource DangerBrush}" TextWrapping="Wrap"
+                               Margin="2,16,2,0" Visibility="Collapsed" />
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Pied de fenêtre -->
+                <Border BorderBrush="{StaticResource StrokeBrush}" BorderThickness="0,1,0,0" Margin="0,22,0,0" Padding="24,14">
+                    <DockPanel>
+                        <Button Style="{StaticResource LinkButton}" Click="OpenImagesFolder_Click"
+                                ToolTip="Remplace une image de classe pour utiliser la tienne">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE838;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                                           VerticalAlignment="Center" Margin="0,0,7,0" />
+                                <TextBlock Text="Images des classes" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource GhostButton}" Content="Annuler" IsCancel="True" Click="Cancel_Click" />
+                            <Button Style="{StaticResource PrimaryButton}" Content="Enregistrer" Margin="8,0,0,0"
+                                    Click="Save_Click" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

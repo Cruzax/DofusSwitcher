@@ -1,0 +1,36 @@
+<Window x:Class="DofusSwitcher.UI.TileLabel"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:DofusSwitcher.UI"
+        Title="Dofus Switcher — étiquette"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+        Topmost="True" ShowInTaskbar="False" ShowActivated="False" Focusable="False"
+        FontFamily="{StaticResource UiFont}" UseLayoutRounding="True">
+    <!-- Étiquette posée sur la fenêtre d'un client en mosaïque : symbole de la classe et pseudo.
+         DataContext : le CharacterSlot du perso (cerclée d'or quand il est au premier plan, comme dans la barre). -->
+    <Border Margin="6" CornerRadius="17" Padding="4,4,14,4">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource StrokeBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                        <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                        <Setter Property="BorderThickness" Value="2" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.55" Color="Black" />
+        </Border.Effect>
+        <StackPanel Orientation="Horizontal">
+            <ui:ClassBadge Width="26" Height="26" Appearance="{Binding Appearance}" CornerRadius="13" ImageMargin="3" />
+            <TextBlock Text="{Binding Name}" Margin="8,0,0,0" VerticalAlignment="Center"
+                       FontFamily="{StaticResource DisplayFont}" FontSize="14" FontWeight="SemiBold"
+                       Foreground="{StaticResource TextBrush}" />
+        </StackPanel>
+    </Border>
+</Window>

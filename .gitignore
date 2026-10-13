@@ -1,0 +1,8 @@
+# Fichiers générés par la compilation
+bin/
+obj/
+*.user
+.vs/
+
+# Exe compilé (se reconstruit avec la commande "dotnet publish" du README)
+publish/

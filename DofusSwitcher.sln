@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8BBD79DB-74B5-4C09-9A1F-AE8C7B8F20D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DofusSwitcher", "src\DofusSwitcher\DofusSwitcher.csproj", "{7BF32828-84B0-42C8-ADBC-4CB40B9072E7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{58CCFA05-CF86-46A3-A2F8-F42489B47690}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DofusSwitcher.Tests", "tests\DofusSwitcher.Tests\DofusSwitcher.Tests.csproj", "{1C9D4D3E-BBD0-4AAE-AD63-54FB75119250}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7BF32828-84B0-42C8-ADBC-4CB40B9072E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BF32828-84B0-42C8-ADBC-4CB40B9072E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BF32828-84B0-42C8-ADBC-4CB40B9072E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BF32828-84B0-42C8-ADBC-4CB40B9072E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C9D4D3E-BBD0-4AAE-AD63-54FB75119250}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C9D4D3E-BBD0-4AAE-AD63-54FB75119250}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C9D4D3E-BBD0-4AAE-AD63-54FB75119250}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C9D4D3E-BBD0-4AAE-AD63-54FB75119250}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7BF32828-84B0-42C8-ADBC-4CB40B9072E7} = {8BBD79DB-74B5-4C09-9A1F-AE8C7B8F20D2}
+		{1C9D4D3E-BBD0-4AAE-AD63-54FB75119250} = {58CCFA05-CF86-46A3-A2F8-F42489B47690}
+	EndGlobalSection
+EndGlobal
