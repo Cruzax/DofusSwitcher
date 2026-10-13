@@ -15,6 +15,11 @@ Passe d'un perso à l'autre en multicompte sur **Dofus 3** (jusqu'à 8), sans Al
 - ⏸️ **Pause** : coupe les raccourcis pour écrire dans le chat.
 - ⏻ **Tout fermer** : ferme tous les clients, un par un (double clic pour confirmer).
 
+## 📥 Télécharger
+
+Prends **`DofusSwitcher.exe`** dans la [dernière release](https://github.com/Cruzax/DofusSwitcher/releases/latest) :
+double-clic et c'est parti, rien à installer (Windows 10 / 11, 64 bits).
+
 ## 🚀 Démarrer
 
 1. Connecte tes persos en jeu.
@@ -28,7 +33,7 @@ Passe d'un perso à l'autre en multicompte sur **Dofus 3** (jusqu'à 8), sans Al
 - 🎨 Symboles de classe téléchargés depuis DofusDB. Pour mettre les tiens : Réglages → **Images des classes**.
 - 📁 Config et journal d'erreurs : `%APPDATA%\DofusSwitcher\`.
 
-## 🛠️ Compiler
+## 🛠️ Compiler soi-même
 
 Il faut le [SDK .NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) (Windows).
 
