@@ -11,7 +11,7 @@
     <AssemblyName>DofusSwitcher</AssemblyName>
     <RootNamespace>DofusSwitcher</RootNamespace>
     <Product>Dofus Switcher</Product>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <!-- Icône du Dofus Vulbis (image DofusDB) : exe, raccourcis, fenêtres et zone de notification. -->
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
   </PropertyGroup>
