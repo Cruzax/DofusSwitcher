@@ -1,0 +1,35 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Couleurs : bois sombre, cuir et laiton, dans la famille de l'interface de Dofus -->
+    <SolidColorBrush x:Key="WindowBrush" Color="#1C1815" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#EB211C18" />
+    <SolidColorBrush x:Key="CardBrush" Color="#262019" />
+    <SolidColorBrush x:Key="CardHoverBrush" Color="#2F2820" />
+    <SolidColorBrush x:Key="InsetBrush" Color="#16120F" />
+    <SolidColorBrush x:Key="KeyBrush" Color="#362D25" />
+    <SolidColorBrush x:Key="KeyHoverBrush" Color="#42372D" />
+    <SolidColorBrush x:Key="StrokeBrush" Color="#2BFFE9C8" />
+    <SolidColorBrush x:Key="TextBrush" Color="#F1E8DA" />
+    <SolidColorBrush x:Key="MutedTextBrush" Color="#A09281" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#E8AE3E" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#F2C463" />
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#22180C" />
+    <SolidColorBrush x:Key="DangerBrush" Color="#E8664E" />
+
+    <!-- Liseré cuivré sous la barre de titre, comme les bandeaux des fenêtres du jeu -->
+    <LinearGradientBrush x:Key="CopperBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#00B8743A" Offset="0" />
+        <GradientStop Color="#B8743A" Offset="0.18" />
+        <GradientStop Color="#E8AE3E" Offset="0.5" />
+        <GradientStop Color="#B8743A" Offset="0.82" />
+        <GradientStop Color="#00B8743A" Offset="1" />
+    </LinearGradientBrush>
+
+    <FontFamily x:Key="UiFont">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <FontFamily x:Key="DisplayFont">Segoe UI Variable Display, Segoe UI</FontFamily>
+    <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+</ResourceDictionary>

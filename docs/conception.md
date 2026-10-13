@@ -29,9 +29,11 @@ Le perso actif est suivi en temps réel via `SetWinEventHook(EVENT_SYSTEM_FOREGR
 
 ## Organisation du code
 
-Trois couches, un dossier par sujet. Les espaces de noms suivent la couche (`DofusSwitcher.Core`,
-`.Services`, `.UI`, `.Win32`), pas le sous-dossier : les sous-dossiers servent à ranger, et les fichiers XAML
-gardent un seul `xmlns` par couche.
+Trois couches, un dossier par sujet, des fichiers courts (moins de 300 lignes, la plupart moins de 150) qui ne
+traitent chacun qu'un sujet : une classe trop grosse est découpée en fichiers « partiels » nommés par thème.
+
+Les espaces de noms suivent la couche (`DofusSwitcher.Core`, `.Services`, `.UI`, `.Win32`), pas le
+sous-dossier : les sous-dossiers servent à ranger, et les fichiers XAML gardent un seul `xmlns` par couche.
 
 ```
 src/DofusSwitcher/
@@ -50,17 +52,24 @@ src/DofusSwitcher/
     Windows/                 WindowScanner, WindowActivator, WindowArranger, WindowAnimator, TaskbarHider,
                              ForegroundWatcher, FlashWatcher
     Switcher/                SwitcherController, découpé par thème :
-                               SwitcherController.cs          persos, config, fenêtre active
+                               SwitcherController.cs          changer de perso, fenêtre active
+                               SwitcherController.Config.cs   config, aperçu de la barre, icônes des persos
                                SwitcherController.Hotkeys.cs  raccourcis, pause
                                SwitcherController.Mosaic.cs   mosaïque, transition, étiquettes, barre des tâches
                                SwitcherController.Clients.cs  actions sur tous les clients (tout fermer)
                              CharacterSlot (une icône de la barre), BarLayout, MosaicResults
   UI/
-    Bar/                     FloatingBar, TileLabel (étiquette sur un client), MosaicOverlay
-    Settings/                SettingsWindow ; Models/ : HotkeyField, EditableCharacter, DetectedCharacter, PreviewTile
+    Bar/                     FloatingBar, découpée en .xaml.cs (affichage, place à l'écran), .Reorder.cs
+                             (glisser-déposer), .Buttons.cs (clics) ; BarStyles.xaml ; TileLabel (étiquette
+                             sur un client) ; MosaicOverlay
+    Settings/                SettingsWindow, découpée en .xaml.cs (ouverture, barre, enregistrement), .Team.cs,
+                             .Hotkeys.cs, .MosaicPreview.cs ; SettingsStyles.xaml, MosaicPreviewStyles.xaml ;
+                             Models/ : HotkeyField, EditableCharacter, DetectedCharacter, PreviewTile
     Controls/                ClassBadge (icône de perso réutilisée partout)
-    Theme/                   Theme.xaml (couleurs et styles), Converters
-  Win32/                     NativeMethods (P/Invoke user32/kernel32)
+    Tray/                    TrayIcon (icône près de l'horloge)
+    Theme/                   Theme.xaml regroupe Colors, Buttons, Inputs, Text ; Converters
+  Win32/                     NativeMethods (P/Invoke), découpé en .Windows.cs (trouver, lire, messages),
+                             .Placement.cs (afficher, placer, styles, écrans), .Input.cs (clavier, notifications)
 tests/DofusSwitcher.Tests/
   Core/…                     Mêmes dossiers que src/DofusSwitcher/Core
 ```

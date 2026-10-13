@@ -1,0 +1,119 @@
+<!-- Styles de la barre flottante : icônes des persos, poignée et petits boutons (pause, mosaïque, tout fermer) -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/UI/Theme/Colors.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style x:Key="SlotButton" TargetType="Button">
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SlotsList" TargetType="ItemsControl">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                <Setter Property="Opacity" Value="0.45" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Poignée de déplacement : verticale en mode horizontal, horizontale en mode vertical -->
+    <Style x:Key="Grip" TargetType="Border">
+        <Setter Property="Width" Value="14" />
+        <Setter Property="Cursor" Value="SizeAll" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="ToolTip" Value="Déplacer (clic droit : réglages)" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Layout.IsVertical}" Value="True">
+                <Setter Property="Width" Value="NaN" />
+                <Setter Property="Height" Value="14" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Base des petits boutons-icônes de la barre (carrés, discrets, plus visibles au survol) -->
+    <Style x:Key="BarIconButton" TargetType="Button">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Margin" Value="0,0,2,0" />
+        <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="#99FFFFFF" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#22FFFFFF" />
+                <Setter Property="Foreground" Value="White" />
+            </Trigger>
+            <DataTrigger Binding="{Binding Layout.IsVertical}" Value="True">
+                <Setter Property="Width" Value="NaN" />
+                <Setter Property="Height" Value="26" />
+                <Setter Property="Margin" Value="0,0,0,2" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Pause : doré quand les raccourcis sont coupés -->
+    <Style x:Key="PauseButton" TargetType="Button" BasedOn="{StaticResource BarIconButton}">
+        <Setter Property="Content" Value="&#xE769;" />
+        <Setter Property="ToolTip" Value="Mettre les raccourcis en pause" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                <Setter Property="Content" Value="&#xE768;" />
+                <Setter Property="Foreground" Value="{StaticResource OnAccentBrush}" />
+                <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+                <Setter Property="ToolTip" Value="En pause : clique pour réactiver les raccourcis" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Mosaïque ⇄ plein écran sans bordure : l'icône montre ce que fera le prochain clic -->
+    <Style x:Key="MosaicButton" TargetType="Button" BasedOn="{StaticResource BarIconButton}">
+        <Setter Property="Content" Value="&#xE8A9;" />
+        <Setter Property="ToolTip" Value="Mosaïque : tous les clients sur l'écran" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsMosaic}" Value="True">
+                <Setter Property="Content" Value="&#xE740;" />
+                <Setter Property="ToolTip" Value="Repasser chaque client en plein écran" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Fermer tous les clients : rouge au survol ; un 1er clic arme le bouton (Tag="Armed"), un 2e confirme -->
+    <Style x:Key="CloseAllButton" TargetType="Button" BasedOn="{StaticResource BarIconButton}">
+        <Setter Property="Margin" Value="2,0,0,0" />
+        <Setter Property="Content" Value="&#xE7E8;" />
+        <Setter Property="ToolTip" Value="Fermer tous les clients Dofus" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+            </Trigger>
+            <DataTrigger Binding="{Binding Layout.IsVertical}" Value="True">
+                <Setter Property="Margin" Value="0,2,0,0" />
+            </DataTrigger>
+            <Trigger Property="Tag" Value="Armed">
+                <Setter Property="Background" Value="{StaticResource DangerBrush}" />
+                <Setter Property="Foreground" Value="White" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

@@ -6,10 +6,13 @@ using System.Windows;
 using DofusSwitcher.Core;
 using DofusSwitcher.Services;
 using DofusSwitcher.UI;
-using Forms = System.Windows.Forms;
 
 namespace DofusSwitcher;
 
+/// <summary>
+/// Démarrage : instance unique (un second lancement avec "--settings" ouvre les réglages de la première), journal
+/// des erreurs, contrôleur, barre flottante, étiquettes de mosaïque et icône près de l'horloge.
+/// </summary>
 public partial class App : Application
 {
     private const string OpenSettingsEventName = "DofusSwitcher.OpenSettings";
@@ -23,7 +26,7 @@ public partial class App : Application
     private SwitcherController? _controller;
     private FloatingBar? _bar;
     private MosaicOverlay? _overlay;
-    private Forms.NotifyIcon? _tray;
+    private TrayIcon? _tray;
     private SettingsWindow? _settings;
 
     protected override void OnStartup(StartupEventArgs e)
@@ -57,7 +60,7 @@ public partial class App : Application
         _bar.QuitRequested += Quit;
         _bar.Show();
 
-        _tray = CreateTrayIcon();
+        _tray = new TrayIcon(_controller, OpenSettings, () => _bar?.ToggleHiddenByUser(), Quit);
 
         if (_controller.HotkeyFailures.Count > 0) ShowHotkeyWarning(_controller);
         if (_controller.Config.Characters.Count == 0 || e.Args.Contains("--settings")) OpenSettings();
@@ -108,36 +111,6 @@ public partial class App : Application
             "Dofus Switcher", MessageBoxButton.OK, MessageBoxImage.Warning);
     }
 
-    private Forms.NotifyIcon CreateTrayIcon()
-    {
-        var menu = new Forms.ContextMenuStrip();
-        var pauseItem = menu.Items.Add("", null, (_, _) => _controller?.TogglePause());
-        menu.Opening += (_, _) => pauseItem.Text = _controller?.IsPaused == true ? "Reprendre" : "Mettre en pause";
-        menu.Items.Add("Réglages", null, (_, _) => OpenSettings());
-        menu.Items.Add("Afficher / masquer la barre", null, (_, _) => _bar?.ToggleHiddenByUser());
-        menu.Items.Add(new Forms.ToolStripSeparator());
-        menu.Items.Add("Quitter", null, (_, _) => Quit());
-
-        var tray = new Forms.NotifyIcon
-        {
-            Icon = LoadTrayIcon(),
-            Text = "Dofus Switcher",
-            ContextMenuStrip = menu,
-            Visible = true,
-        };
-        tray.DoubleClick += (_, _) => OpenSettings();
-        return tray;
-    }
-
-    private static System.Drawing.Icon LoadTrayIcon()
-    {
-        var resource = GetResourceStream(new System.Uri("pack://application:,,,/Assets/app.ico"));
-        if (resource is null) return System.Drawing.SystemIcons.Application;
-        using var stream = resource.Stream;
-        // Taille adaptée à la zone de notification (16 px à 100 %, plus en haute résolution).
-        return new System.Drawing.Icon(stream, Forms.SystemInformation.SmallIconSize);
-    }
-
     private void OpenSettings()
     {
         if (_controller is null) return;
@@ -154,12 +127,8 @@ public partial class App : Application
 
     private void Quit()
     {
-        if (_tray is not null)
-        {
-            _tray.Visible = false;
-            _tray.Dispose();
-            _tray = null;
-        }
+        _tray?.Dispose();
+        _tray = null;
         _controller?.Dispose();
         _controller = null;
         Shutdown();
