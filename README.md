@@ -65,7 +65,7 @@ Logo : le Dofus Vulbis (`src/DofusSwitcher/Assets/`), image récupérée sur Dof
 ## Développer
 
 ```bash
-dotnet test
+dotnet build src\DofusSwitcher\DofusSwitcher.csproj
 dotnet publish src\DofusSwitcher\DofusSwitcher.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o publish
 ```
 

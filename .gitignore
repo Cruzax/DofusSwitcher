@@ -6,3 +6,6 @@ obj/
 
 # Exe compilé (se reconstruit avec la commande "dotnet publish" du README)
 publish/
+
+# Tests unitaires : gardés en local pour le développement, pas publiés
+tests/

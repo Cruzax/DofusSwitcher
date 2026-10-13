@@ -70,8 +70,6 @@ src/DofusSwitcher/
     Theme/                   Theme.xaml regroupe Colors, Buttons, Inputs, Text ; Converters
   Win32/                     NativeMethods (P/Invoke), découpé en .Windows.cs (trouver, lire, messages),
                              .Placement.cs (afficher, placer, styles, écrans), .Input.cs (clavier, notifications)
-tests/DofusSwitcher.Tests/
-  Core/…                     Mêmes dossiers que src/DofusSwitcher/Core
 ```
 
 ### Points clés
@@ -102,5 +100,6 @@ tests/DofusSwitcher.Tests/
 
 ## Tests
 
-Tests unitaires xUnit sur toute la partie `Core/`. Raccourcis, mosaïque et fermeture : tests de bout en bout avec
-de faux clients (petite appli WinForms nommée `Dofus.exe` aux titres de vrais persos) et, ponctuellement, les vrais.
+Tests unitaires xUnit sur toute la partie `Core/`, gardés en local (dossier `tests/`, non publié).
+Raccourcis, mosaïque et fermeture : tests de bout en bout avec de faux clients (petite appli WinForms nommée
+`Dofus.exe` aux titres de vrais persos) et, ponctuellement, les vrais.
