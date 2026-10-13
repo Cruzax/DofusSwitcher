@@ -2,6 +2,8 @@
 
 Passe d'un perso à l'autre en multicompte sur **Dofus 3** (jusqu'à 8), sans Alt+Tab.
 
+[![Télécharger](https://img.shields.io/github/v/release/Cruzax/DofusSwitcher?label=T%C3%A9l%C3%A9charger&logo=windows&logoColor=white&color=e8ae3e&style=for-the-badge)](https://github.com/Cruzax/DofusSwitcher/releases/latest)
+
 > 🛡️ L'appli ne fait que gérer les fenêtres : elle n'envoie **aucune touche ni aucun clic** au jeu et n'y lit rien.
 
 ## ✨ Ce qu'elle fait
