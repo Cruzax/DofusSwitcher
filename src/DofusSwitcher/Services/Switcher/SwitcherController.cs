@@ -25,7 +25,10 @@ public sealed partial class SwitcherController : ObservableObject, IDisposable
 
     private Dictionary<string, IntPtr> _windows = new(StringComparer.OrdinalIgnoreCase);
     private string? _lastActive;
+    /// <summary>Un client Dofus ou l'appli (barre, réglages) est au premier plan : la barre reste affichée.</summary>
     private bool _isGameInFront = true;
+    /// <summary>Un client Dofus lui-même est au premier plan : les étiquettes de mosaïque s'affichent.</summary>
+    private bool _isClientInFront = true;
     private BarLayout _layout;
 
     public SwitcherController(ConfigStore store, ErrorLog errors)
@@ -218,8 +221,10 @@ public sealed partial class SwitcherController : ObservableObject, IDisposable
         // Pendant un changement de fenêtre, Windows passe parfois brièvement par "aucune fenêtre" : on l'ignore.
         if (foregroundWindow == IntPtr.Zero) return;
         FollowFocus(foregroundWindow);
-        bool gameInFront = IsOwnWindow(foregroundWindow) || _scanner.IsGameWindow(foregroundWindow);
-        if (gameInFront == _isGameInFront) return;
+        bool clientInFront = _scanner.IsGameWindow(foregroundWindow);
+        bool gameInFront = clientInFront || IsOwnWindow(foregroundWindow);
+        if (clientInFront == _isClientInFront && gameInFront == _isGameInFront) return;
+        _isClientInFront = clientInFront;
         _isGameInFront = gameInFront;
         OnPropertyChanged(nameof(IsBarWanted));
         UpdateTaskbar();

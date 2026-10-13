@@ -101,6 +101,19 @@ internal static class NativeMethods
     [DllImport("kernel32.dll")]
     public static extern uint GetCurrentThreadId();
 
+    [DllImport("user32.dll")]
+    private static extern short GetAsyncKeyState(int vKey);
+
+    /// <summary>Vrai si Maj, Ctrl, Alt ou une touche Windows est enfoncée en ce moment.</summary>
+    public static bool AnyModifierDown()
+    {
+        foreach (int vk in new[] { 0x10, 0x11, 0x12, 0x5B, 0x5C }) // VK_SHIFT, VK_CONTROL, VK_MENU, VK_LWIN, VK_RWIN
+        {
+            if ((GetAsyncKeyState(vk) & 0x8000) != 0) return true;
+        }
+        return false;
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
     {

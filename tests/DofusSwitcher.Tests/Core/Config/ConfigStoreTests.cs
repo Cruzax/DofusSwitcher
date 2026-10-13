@@ -18,6 +18,7 @@ public sealed class ConfigStoreTests : IDisposable
         Assert.Empty(config.Characters);
         Assert.Equal("F6", config.NextHotkey);
         Assert.Null(config.PauseHotkey);
+        Assert.Null(config.MosaicHotkey);
         Assert.True(config.AutoHideBar);
         Assert.True(config.MosaicFocusActive);
         Assert.Equal(BarSize.Normal, config.BarSize);
@@ -32,6 +33,7 @@ public sealed class ConfigStoreTests : IDisposable
         {
             NextHotkey = "Ctrl+Tab",
             PauseHotkey = "Pause",
+            MosaicHotkey = "Ctrl+M",
             BarLeft = 120,
             BarTop = 4,
             BarOrientation = BarOrientation.Vertical,
@@ -50,6 +52,7 @@ public sealed class ConfigStoreTests : IDisposable
         Assert.Null(loaded.Characters[1].Hotkey);
         Assert.Equal("Ctrl+Tab", loaded.NextHotkey);
         Assert.Equal("Pause", loaded.PauseHotkey);
+        Assert.Equal("Ctrl+M", loaded.MosaicHotkey);
         Assert.Equal(BarOrientation.Vertical, loaded.BarOrientation);
         Assert.Equal(BarSize.Large, loaded.BarSize);
         Assert.False(loaded.AutoHideBar);

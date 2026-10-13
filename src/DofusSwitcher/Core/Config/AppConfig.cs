@@ -40,6 +40,9 @@ public sealed class AppConfig
     /// <summary>Touche qui met en pause / réactive les raccourcis (aucune par défaut).</summary>
     public string? PauseHotkey { get; set; }
 
+    /// <summary>Touche qui bascule entre mosaïque et plein écran, comme le bouton de la barre (aucune par défaut).</summary>
+    public string? MosaicHotkey { get; set; }
+
     /// <summary>Noms de processus (sans .exe) considérés comme des clients Dofus.</summary>
     public List<string> ProcessNames { get; set; } = new() { "Dofus" };
 

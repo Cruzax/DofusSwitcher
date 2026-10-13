@@ -47,6 +47,7 @@ public partial class SettingsWindow : Window
             new HotkeyField(HotkeyOwners.Next, "Perso suivant", config.NextHotkey),
             new HotkeyField(HotkeyOwners.Previous, "Perso précédent", config.PreviousHotkey),
             new HotkeyField(HotkeyOwners.Pause, "Pause / reprise", config.PauseHotkey),
+            new HotkeyField(HotkeyOwners.Mosaic, "Mosaïque / plein écran", config.MosaicHotkey),
         };
 
         InitializeComponent();
@@ -291,6 +292,7 @@ public partial class SettingsWindow : Window
             NextHotkey = NullIfEmpty(NavigationFields[0].Hotkey),
             PreviousHotkey = NullIfEmpty(NavigationFields[1].Hotkey),
             PauseHotkey = NullIfEmpty(NavigationFields[2].Hotkey),
+            MosaicHotkey = NullIfEmpty(NavigationFields[3].Hotkey),
             ProcessNames = current.ProcessNames,
             BarLeft = current.BarLeft,
             BarTop = current.BarTop,

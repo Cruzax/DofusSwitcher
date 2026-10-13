@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DofusSwitcher.Core;
+using DofusSwitcher.Win32;
 
 namespace DofusSwitcher.Services;
 
@@ -57,6 +59,19 @@ public sealed partial class SwitcherController
         }
         TryRegister(HotkeyOwners.Next, "Perso suivant", Config.NextHotkey, () => Step(1));
         TryRegister(HotkeyOwners.Previous, "Perso précédent", Config.PreviousHotkey, () => Step(-1));
+        TryRegister(HotkeyOwners.Mosaic, "Mosaïque / plein écran", Config.MosaicHotkey, () => _ = ToggleMosaicFromKeyboardAsync());
+    }
+
+    /// <summary>
+    /// Le rangement fait passer chaque client au premier plan en reliant un instant notre clavier au sien : si Ctrl
+    /// ou Alt du raccourci sont encore enfoncées, leur relâchement peut se perdre et la touche rester "bloquée" (y
+    /// compris pour le jeu). On attend donc qu'elles soient relâchées, une seconde au plus.
+    /// </summary>
+    private async Task ToggleMosaicFromKeyboardAsync()
+    {
+        for (int waited = 0; waited < 1000 && NativeMethods.AnyModifierDown(); waited += 20) await Task.Delay(20);
+        await Task.Delay(30); // laisse Windows traiter les derniers relâchements
+        await ToggleMosaicAsync();
     }
 
     private void TryRegister(string owner, string label, string? text, Action action)

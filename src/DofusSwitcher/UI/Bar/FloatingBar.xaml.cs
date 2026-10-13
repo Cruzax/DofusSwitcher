@@ -39,6 +39,7 @@ public partial class FloatingBar : Window
         DataContext = controller;
         controller.Slots.CollectionChanged += (_, _) => UpdateEmptyHint();
         controller.PropertyChanged += OnControllerPropertyChanged;
+        controller.FullscreenClientsSkipped += OnFullscreenClientsSkipped;
         UpdateEmptyHint();
         Loaded += (_, _) => PlaceOnScreen();
         // Changer de taille ou d'orientation peut faire déborder la barre près d'un bord.
@@ -299,12 +300,13 @@ public partial class FloatingBar : Window
 
     private void Pause_Click(object sender, RoutedEventArgs e) => _controller.TogglePause();
 
-    private async void Mosaic_Click(object sender, RoutedEventArgs e)
+    private async void Mosaic_Click(object sender, RoutedEventArgs e) => await _controller.ToggleMosaicAsync();
+
+    /// <summary>Après le bouton ou la touche de mosaïque : explique pourquoi certains clients n'ont pas bougé.</summary>
+    private void OnFullscreenClientsSkipped(int count)
     {
-        var result = await _controller.ToggleMosaicAsync();
-        if (result.SkippedFullscreen == 0) return;
         MessageBox.Show(
-            (result.SkippedFullscreen == 1 ? "Un client est réglé" : $"{result.SkippedFullscreen} clients sont réglés")
+            (count == 1 ? "Un client est réglé" : $"{count} clients sont réglés")
             + " sur « Plein écran » dans Dofus et ne peut pas être rangé.\n\n"
             + "Dans Dofus : Options → Affichage → Mode d'affichage → « Fenêtré ». Le bouton s'occupe ensuite "
             + "du plein écran (sans bordure) et de la mosaïque.",

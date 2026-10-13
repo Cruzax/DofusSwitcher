@@ -27,7 +27,7 @@ L'outil ne fait que changer de fenêtre : il n'envoie aucune touche ni aucun cli
 - Bouton pause (à côté de la poignée) : coupe les raccourcis clavier pour que les touches reviennent au
   jeu (pour écrire dans le chat par exemple). Bouton doré + icônes grisées = en pause. Une touche
   « Pause / reprise » optionnelle se règle dans les réglages ; elle reste active pendant la pause.
-- Bouton mosaïque (à côté de la pause) : range tous les clients en grille sur l'écran (2×2 pour 3-4 comptes, 3×2 ou 3×3 au-delà,
+- Bouton mosaïque (à côté de la pause), ou la touche « Mosaïque / plein écran » des réglages (aucune par défaut) : range tous les clients en grille sur l'écran (2×2 pour 3-4 comptes, 3×2 ou 3×3 au-delà,
   côte à côte pour 2), dans l'ordre de la barre. Un second clic repasse chaque client en plein écran (sans
   bordure). Dofus doit être réglé sur **Fenêtré** (Options → Affichage → Mode d'affichage) : en « Plein écran »,
   le jeu impose sa taille et l'appli te le signale. En mosaïque, la barre des tâches Windows est cachée tant

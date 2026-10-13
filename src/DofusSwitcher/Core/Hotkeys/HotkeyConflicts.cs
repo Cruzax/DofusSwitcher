@@ -10,6 +10,7 @@ public static class HotkeyOwners
     public const string Next = "@next";
     public const string Previous = "@previous";
     public const string Pause = "@pause";
+    public const string Mosaic = "@mosaic";
 }
 
 /// <summary>Raccourci que Windows a refusé (déjà pris par une autre appli).</summary>

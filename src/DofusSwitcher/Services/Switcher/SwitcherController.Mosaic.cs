@@ -35,6 +35,9 @@ public sealed partial class SwitcherController
     /// <summary>Étiquettes (symbole + pseudo) à poser sur les clients ; liste vide = toutes cachées.</summary>
     public event Action<IReadOnlyList<MosaicLabel>>? MosaicLabelsChanged;
 
+    /// <summary>Des clients réglés sur "Plein écran" dans Dofus n'ont pas pu être rangés (bouton ou touche).</summary>
+    public event Action<int>? FullscreenClientsSkipped;
+
     /// <summary>
     /// Passe de la mosaïque au plein écran sans bordure et inversement. Les clients réglés sur "Plein écran"
     /// dans Dofus ne se laissent pas ranger : ils sont laissés tels quels et comptés dans le résultat.
@@ -47,7 +50,11 @@ public sealed partial class SwitcherController
         var all = _scanner.FindGameWindows();
         var windows = all.Where(w => !WindowArranger.IsGameFullscreenMode(w.Handle)).Select(w => w.Handle).ToList();
         int skipped = all.Count - windows.Count;
-        if (windows.Count == 0) return new MosaicResult(0, skipped);
+        if (windows.Count == 0)
+        {
+            if (skipped > 0) FullscreenClientsSkipped?.Invoke(skipped);
+            return new MosaicResult(0, skipped);
+        }
 
         // Dans l'ordre de la barre (persos inconnus et écrans de connexion à la fin), pour que la mosaïque
         // soit toujours rangée pareil.
@@ -96,6 +103,8 @@ public sealed partial class SwitcherController
         }
         OnForegroundChanged(NativeMethods.GetForegroundWindow());
         UpdateMosaicLabels();
+        // Après le rangement : le message ne bloque pas les clients qui, eux, ont pu être rangés.
+        if (skipped > 0) FullscreenClientsSkipped?.Invoke(skipped);
         return new MosaicResult(windows.Count, skipped);
     }
 
@@ -139,12 +148,12 @@ public sealed partial class SwitcherController
 
     /// <summary>
     /// Une étiquette par client en mosaïque, grande case comprise. Cachées hors mosaïque, pendant un rangement
-    /// ou une transition, et quand une autre appli est au premier plan.
+    /// ou une transition, et dès que ce n'est pas un client qui est au premier plan (autre appli, réglages…).
     /// </summary>
     private void UpdateMosaicLabels()
     {
         var labels = new List<MosaicLabel>();
-        if (IsMosaic && _isGameInFront && !_isArranging && !_animator.IsRunning)
+        if (IsMosaic && _isClientInFront && !_isArranging && !_animator.IsRunning)
         {
             foreach (var (hwnd, tile) in MosaicTargets())
             {
