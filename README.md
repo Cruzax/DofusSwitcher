@@ -32,7 +32,7 @@ double-clic et c'est parti, rien à installer (Windows 10 / 11, 64 bits).
 
 - 🪟 Pour la mosaïque, règle Dofus sur **Fenêtré** (Options → Affichage). L'appli gère ensuite le plein écran.
 - ↔️ Glisse une icône dans la barre pour changer l'ordre, et la poignée `⋮⋮` pour déplacer la barre.
-- 🎨 Symboles de classe téléchargés depuis DofusDB. Pour mettre les tiens : Réglages → **Images des classes**.
+- 🎨 Chaque perso prend la couleur et le symbole de sa classe, téléchargé automatiquement depuis DofusDB.
 - 📁 Config et journal d'erreurs : `%APPDATA%\DofusSwitcher\`.
 
 ## 🛠️ Compiler soi-même

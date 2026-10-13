@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -134,13 +132,6 @@ public partial class SettingsWindow : Window
     private void Cancel_Click(object sender, RoutedEventArgs e) => Close();
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => DragMove();
-
-    private void OpenImagesFolder_Click(object sender, RoutedEventArgs e)
-    {
-        var folder = _controller.Appearances.ImagesFolder;
-        Directory.CreateDirectory(folder);
-        Process.Start(new ProcessStartInfo("explorer.exe", $"\"{folder}\"") { UseShellExecute = true });
-    }
 
     private void ShowStatus(string message)
     {

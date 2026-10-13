@@ -20,8 +20,6 @@ public sealed class ClassImageProvider
 
     public ClassImageProvider(string folder) => _folder = folder;
 
-    public string Folder => _folder;
-
     public ImageSource? Get(string? className)
     {
         if (string.IsNullOrWhiteSpace(className)) return null;

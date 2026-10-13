@@ -270,21 +270,11 @@
 
                 <!-- Pied de fenêtre -->
                 <Border BorderBrush="{StaticResource StrokeBrush}" BorderThickness="0,1,0,0" Margin="0,22,0,0" Padding="24,14">
-                    <DockPanel>
-                        <Button Style="{StaticResource LinkButton}" Click="OpenImagesFolder_Click"
-                                ToolTip="Remplace une image de classe pour utiliser la tienne">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="&#xE838;" FontFamily="{StaticResource IconFont}" FontSize="13"
-                                           VerticalAlignment="Center" Margin="0,0,7,0" />
-                                <TextBlock Text="Images des classes" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Style="{StaticResource GhostButton}" Content="Annuler" IsCancel="True" Click="Cancel_Click" />
-                            <Button Style="{StaticResource PrimaryButton}" Content="Enregistrer" Margin="8,0,0,0"
-                                    Click="Save_Click" />
-                        </StackPanel>
-                    </DockPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource GhostButton}" Content="Annuler" IsCancel="True" Click="Cancel_Click" />
+                        <Button Style="{StaticResource PrimaryButton}" Content="Enregistrer" Margin="8,0,0,0"
+                                Click="Save_Click" />
+                    </StackPanel>
                 </Border>
             </StackPanel>
         </Border>

@@ -25,8 +25,6 @@ public sealed class ClassAppearanceProvider
         _downloader = new ClassImageDownloader(imagesFolder);
     }
 
-    public string ImagesFolder => _images.Folder;
-
     /// <summary>Levé quand une image vient d'être téléchargée.</summary>
     public event Action? ImagesChanged;
 
